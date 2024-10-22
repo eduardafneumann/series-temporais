@@ -13,38 +13,45 @@ def load_data():
 
 df_zika, df_chik, df_deng, df_aids = load_data()
 
-# Add a multiselect box for selecting dataframes
+# Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
-    'Select Dataframes',
+    'Selecione Dataframes',
     options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
     default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
 )
 
-# Add a slider for selecting the time period
+# Add a selectbox to select frequency
+frequency_option = st.selectbox(
+    'Selecione a Frequência',
+    options=['D', 'W', 'YE'],
+    format_func=lambda x: 'Diário' if x == 'D' else 'Semanal' if x == 'W' else 'Anual'
+)
+
+# Add a slider to select time period
 start_date, end_date = st.slider(
-    'Select Time Period',
+    'Selecione o Período de Tempo',
     min_value=pd.to_datetime('2000-01-01').date(),
     max_value=pd.to_datetime('2023-12-31').date(),
     value=(pd.to_datetime('2020-01-01').date(), pd.to_datetime('2023-12-31').date())
 )
 
-# Add a selectbox for filtering by "sexo"
+# Add a selectbox to filter by "sexo"
 sexo_option = st.selectbox(
-    'Select Gender',
+    'Selecione o Gênero',
     options=[-1, 0, 1, 2],
-    format_func=lambda x: 'All' if x == -1 else 'Not Identified' if x == 0 else 'Male' if x == 1 else 'Female'
+    format_func=lambda x: 'Todos' if x == -1 else 'Não Identificado' if x == 0 else 'Masculino' if x == 1 else 'Feminino'
 )
 
-# Add a selectbox for filtering by "raca"
+# Add a selectbox to filter by "raca"
 raca_option = st.selectbox(
-    'Select Race',
+    'Selecione a Raça',
     options=[-1, 0, 1, 2, 3, 4, 5],
-    format_func=lambda x: 'All' if x == -1 else 'Not Identified' if x == 0 else 'White' if x == 1 else 'Black' if x == 2 else 'Yellow' if x == 3 else 'Brown' if x == 4 else 'Indigenous'
+    format_func=lambda x: 'Todos' if x == -1 else 'Não Identificado' if x == 0 else 'Branca' if x == 1 else 'Preta' if x == 2 else 'Amarela' if x == 3 else 'Parda' if x == 4 else 'Indígena'
 )
 
-# Add a slider for filtering by "idade"
+# Add a slider to select age
 idade_option = st.slider(
-    'Select Age',
+    'Selecione a Idade',
     min_value=0,
     max_value=150,
     value=(0, 150)
@@ -55,9 +62,8 @@ idade_option = st.slider(
 def filter_df_time(df, start_date, end_date):
     return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
 
-
 # Function to filter dataframe
-def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease):
+def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
     df = filter_df_time(df, start_date, end_date)
     if sexo_option != -1:
         df = df[df['sexo'] == sexo_option]
@@ -65,8 +71,7 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, 
         df = df[df['raca'] == raca_option]
     df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
 
-
-    df = df.resample('D').count()
+    df = df.resample(frequency).count()
     df = df[['sexo']]
     df = df.rename(columns={'sexo': 'casos'})
     df['doenca'] = disease
@@ -76,18 +81,18 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, 
 # Filter selected dataframes
 filtered_dfs = []
 if 'ZIKA' in dfs_option:
-    filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA'))
+    filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA', frequency_option))
 if 'CHIK' in dfs_option:
-    filtered_dfs.append(filter_df(df_chik, start_date, end_date, sexo_option, raca_option, idade_option, 'CHIK'))
+    filtered_dfs.append(filter_df(df_chik, start_date, end_date, sexo_option, raca_option, idade_option, 'CHIK', frequency_option))
 if 'DENG' in dfs_option:
-    filtered_dfs.append(filter_df(df_deng, start_date, end_date, sexo_option, raca_option, idade_option, 'DENG'))
+    filtered_dfs.append(filter_df(df_deng, start_date, end_date, sexo_option, raca_option, idade_option, 'DENG', frequency_option))
 if 'AIDS' in dfs_option:
-    filtered_dfs.append(filter_df(df_aids, start_date, end_date, sexo_option, raca_option, idade_option, 'AIDS'))
+    filtered_dfs.append(filter_df(df_aids, start_date, end_date, sexo_option, raca_option, idade_option, 'AIDS', frequency_option))
 
 # Combine filtered dataframes
 if filtered_dfs:
     combined_df = pd.concat(filtered_dfs)
     
-    # Plot line chart for the combined data
+    # Plot data
     fig = px.line(combined_df, x=combined_df.index, y='casos', color='doenca', title='Casos por Doença')
     st.plotly_chart(fig, key=1)
