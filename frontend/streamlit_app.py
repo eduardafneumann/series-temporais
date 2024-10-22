@@ -4,7 +4,7 @@ pages = {
     "Bases": [
         #st.Page("pages/bases/sih.py", title="SIH"),
         #st.Page("pages/bases/sim.py", title="SIM"),
-        st.Page("pages/bases/sinan.py", title="SINAN")
+        st.Page("pages/sinan.py", title="SINAN")
     ],
     "Insights": [
         st.Page("pages/insights.py", title="Insight 1"),
