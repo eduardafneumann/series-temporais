@@ -7,3 +7,18 @@ frontend/data/sinan/chik.csv
 frontend/data/sinan/zika.csv
 frontend/data/sinan/deng1.csv
 frontend/data/sinan/deng2.csv
+
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+venv/pyvenv.cfg
+venv
