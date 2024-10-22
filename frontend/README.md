@@ -7,5 +7,5 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
-streamlit run streamlit_app.py
+streamlit run ./frontend/streamlit_app.py
 ```
