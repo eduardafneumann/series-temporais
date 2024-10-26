@@ -79,8 +79,7 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, 
     df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
 
     df = df.resample(frequency).count()
-    df = df[['sexo']]
-    df = df.rename(columns={'sexo': 'casos'})
+    df = df[['sexo']].rename(columns={'sexo': 'casos'})
     df['doenca'] = disease
 
     return df
