@@ -30,16 +30,16 @@ dfs_option = st.multiselect(
 # Add a selectbox to select frequency
 frequency_option = st.selectbox(
     'Selecione a Frequência',
-    options=['D', 'W', 'YE'],
-    format_func=lambda x: 'Diário' if x == 'D' else 'Semanal' if x == 'W' else 'Anual'
+    options=['ME', 'D', 'W', 'YE'],
+    format_func=lambda x: 'Diário' if x == 'D' else 'Semanal' if x == 'W' else 'Mensal' if x == 'ME' else 'Anual'
 )
 
 # Add a slider to select time period
 start_date, end_date = st.slider(
     'Selecione o Período de Tempo',
-    min_value=pd.to_datetime('2000-01-01').date(),
+    min_value=pd.to_datetime('2016-01-01').date(),
     max_value=pd.to_datetime('2023-12-31').date(),
-    value=(pd.to_datetime('2020-01-01').date(), pd.to_datetime('2023-12-31').date())
+    value=(pd.to_datetime('2016-01-01').date(), pd.to_datetime('2023-12-31').date())
 )
 
 # Add a selectbox to filter by "sexo"
