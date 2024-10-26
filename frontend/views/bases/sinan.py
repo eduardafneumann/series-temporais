@@ -11,8 +11,7 @@ st.write("""
 def load_data():
     df_zika = pd.read_parquet('data-extraction/parquet_data/ZIKA.parquet')
     df_chik = pd.read_parquet('data-extraction/parquet_data/CHIK.parquet')
-    #df_deng = pd.read_parquet('data-extraction/parquet_data/DENG.parquet')
-    df_deng = None
+    df_deng = pd.read_parquet('data-extraction/parquet_data/DENG_light.parquet')
     df_aids = pd.read_parquet('data-extraction/parquet_data/AIDS.parquet')
     return df_zika, df_chik, df_deng, df_aids
 
@@ -21,10 +20,8 @@ df_zika, df_chik, df_deng, df_aids = load_data()
 # Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
     'Selecione Dataframes',
-    #options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
-    #default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
-    options=['ZIKA', 'CHIK', 'AIDS'],
-    default=['ZIKA', 'CHIK', 'AIDS']
+    options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
+    default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
 )
 
 # Add a selectbox to select frequency
