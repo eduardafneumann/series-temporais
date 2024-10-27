@@ -11,7 +11,8 @@ st.write("""
 def load_data():
     df_zika = pd.read_parquet('data-extraction/parquet_data/ZIKA.parquet')
     df_chik = pd.read_parquet('data-extraction/parquet_data/CHIK.parquet')
-    df_deng = pd.read_parquet('data-extraction/parquet_data/DENG.parquet')
+    #df_deng = pd.read_parquet('data-extraction/parquet_data/DENG.parquet')
+    df_deng = None
     df_aids = pd.read_parquet('data-extraction/parquet_data/AIDS.parquet')
     return df_zika, df_chik, df_deng, df_aids
 
@@ -20,23 +21,25 @@ df_zika, df_chik, df_deng, df_aids = load_data()
 # Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
     'Selecione Dataframes',
-    options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
-    default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
+    #options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
+    #default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
+    options=['ZIKA', 'CHIK', 'AIDS'],
+    default=['ZIKA', 'CHIK', 'AIDS']
 )
 
 # Add a selectbox to select frequency
 frequency_option = st.selectbox(
     'Selecione a Frequência',
-    options=['D', 'W', 'YE'],
-    format_func=lambda x: 'Diário' if x == 'D' else 'Semanal' if x == 'W' else 'Anual'
+    options=['ME', 'D', 'W', 'YE'],
+    format_func=lambda x: 'Diário' if x == 'D' else 'Semanal' if x == 'W' else 'Mensal' if x == 'ME' else 'Anual'
 )
 
 # Add a slider to select time period
 start_date, end_date = st.slider(
     'Selecione o Período de Tempo',
-    min_value=pd.to_datetime('2000-01-01').date(),
+    min_value=pd.to_datetime('2016-01-01').date(),
     max_value=pd.to_datetime('2023-12-31').date(),
-    value=(pd.to_datetime('2020-01-01').date(), pd.to_datetime('2023-12-31').date())
+    value=(pd.to_datetime('2016-01-01').date(), pd.to_datetime('2023-12-31').date())
 )
 
 # Add a selectbox to filter by "sexo"
@@ -76,8 +79,7 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, 
     df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
 
     df = df.resample(frequency).count()
-    df = df[['sexo']]
-    df = df.rename(columns={'sexo': 'casos'})
+    df = df[['sexo']].rename(columns={'sexo': 'casos'})
     df['doenca'] = disease
 
     return df
