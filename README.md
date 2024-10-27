@@ -1,11 +1,15 @@
 Para rodar o frontend localmente, execute:
 
 ```
-python3 -m venv venv
-
-source venv/bin/activate
-
-pip install -r requirements.txt
+pip install -r ./frontend/requirements.txt
 
 streamlit run ./frontend/streamlit_app.py
 ```
+
+Para rodar o frontend via docker, execute:
+
+```
+docker compose watch
+```
+
+Em ambos os casos o frontend estará disponível em http://localhost:8000.
