@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  nginx:
+    build:
+      context: ./nginx/dev
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/dev/config/nginx:/etc/nginx
+      - ./nginx/dev/share/index.html:/usr/share/nginx/html/index.html
+    restart: on-failure:5
+
+  streamlit-server:
+    build:
+      context: ./frontend
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app

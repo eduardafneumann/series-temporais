@@ -6,17 +6,17 @@ O DataSUS é o departamento de informática do Sistema Único de Saúde (SUS), r
 
 Desenvolver uma plataforma web para visualização de séries temporais, utilizando os dados disponibilizados pelo DataSUS, facilitando a análise de informações de saúde ao longo do tempo.
 
-## Requisitos (Windows)
+## Requisitos (Linux e Windows)
 
 ### Ambiente de desenvolvimento
 
 - [Python](https://www.python.org/)
-- [Git](https://www.python.org/)
+- [Git](https://git-scm.com/downloads)
 
 ### Ambiente de produção
 
 - [Docker Desktop](https://www.docker.com/get-started)
-- [Git](https://www.python.org/)
+- [Git](https://git-scm.com/downloads)
 
 ## Configuração do ambiente de desenvolvimento (Windows)
 
@@ -60,7 +60,7 @@ cd frontend
 streamlit run ./streamlit_app.py
 ```
 
-## Configuração do ambiente de produção (Linux e Windows)
+## Configuração do ambiente de desenvolvimento Docker (Linux e Windows)
 
 A seguintes etapas consideram que o Docker e o Git estejam previamente configurados na máquina na qual se quer criar este ambiente.
 
@@ -69,7 +69,7 @@ A seguintes etapas consideram que o Docker e o Git estejam previamente configura
 - Inicie o servidor Streamlit por meio do Docker:
 
 ```
-docker-compose up --build
+docker-compose -f docker-compose.dev.yaml up --build
 ```
 
-- Acesse o frontend pela URL [localhost](http://localhost:8000)
+- Acesse o frontend pela URL [localhost](http://localhost)
