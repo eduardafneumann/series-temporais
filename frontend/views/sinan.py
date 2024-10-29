@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.express as px
 
 st.write(""" 
-         # DataSUS - Sinan - Comparações entre Doenças    
+         # DataSUS - Sinan         
          """)
 
 # Load data

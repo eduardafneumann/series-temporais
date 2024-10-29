@@ -14,11 +14,11 @@ end_date=pd.to_datetime('2023-12-31').date()
 # Load data
 @st.cache_data
 def load_data():
-    df_zika = pd.read_parquet('data/ZIKA.parquet')
-    df_chik = pd.read_parquet('data/CHIK.parquet')
+    df_zika = pd.read_parquet('frontend/data/ZIKA.parquet')
+    df_chik = pd.read_parquet('frontend/data/CHIK.parquet')
     #df_deng = pd.read_parquet('data/DENG.parquet')
     df_deng = None
-    df_aids = pd.read_parquet('data/AIDS.parquet')
+    df_aids = pd.read_parquet('frontend/data/AIDS.parquet')
     return df_zika, df_chik, df_deng, df_aids
 
 
