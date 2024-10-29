@@ -57,9 +57,11 @@ cd frontend
 - Inicie o servidor do Streamlit com o comando:
 
 ```
-streamlit run ./streamlit_app.py
+streamlit run ./streamlit_app.py --server.port 8000
 ```
 
+- Acesse o frontend pela URL [localhost](http://localhost:8000)
+  
 ## Configuração do ambiente de desenvolvimento Docker (Linux e Windows)
 
 A seguintes etapas consideram que o Docker e o Git estejam previamente configurados na máquina na qual se quer criar este ambiente.
