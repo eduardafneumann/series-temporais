@@ -1,15 +1,10 @@
 import streamlit as st
 
 pages = {
-    "Bases": [
-        #st.Page("views/bases/sih.py", title="SIH"),
-        #st.Page("views/bases/sim.py", title="SIM"),
-        st.Page("views/bases/sinan.py", title="SINAN", icon='🦠')
-    ],
     "Insights": [
-        st.Page("views/insights.py", title="Insight 1"),
-        st.Page("views/insights2.py", title="Insight 2"),
-        st.Page("views/insights.py", title="Insight 3", url_path='i2'),
+        st.Page("views/serie_completa.py", title="Comparação entre Doenças", icon='📊'),
+        st.Page("views/plot_sazonal.py", title="Plot Sazonal", icon='📈'),
+        st.Page("views/serie_categoria.py", title="Comparação entre Valores de Categoria", icon='📊'),
     ],
 }
 
@@ -19,7 +14,7 @@ pg.run()
 with st.sidebar:
     st.image("images/logo-datasus.png", use_column_width=True)
     #st.title("DATASUS")
-    st.page_link(pages['Bases'][0])
     st.page_link(pages['Insights'][0])
     st.page_link(pages['Insights'][1])
+    st.page_link(pages['Insights'][2])
     
