@@ -2,6 +2,11 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
+
+st.write(""" 
+         # DataSUS - Sinan - Plots Sazonais    
+         """)
+
 start_date=pd.to_datetime('2016-01-01').date()
 end_date=pd.to_datetime('2023-12-31').date()
 
@@ -40,11 +45,11 @@ for disease in dfs_option:
     df = df.resample('ME').count()
     df = df[['sexo']].rename(columns={'sexo': 'casos'})
 
-    df['year'] = df.index.year
-    df['month'] = df.index.month_name()
+    df['ano'] = df.index.year
+    df['mes'] = df.index.month_name()
 
     # Create a seasonal plot
-    fig = px.line(df, x='month', y='casos', color='year', title=f'Seasonal Plot for {disease} Data in Brazil')
+    fig = px.line(df, x='mes', y='casos', color='ano', title=f'Plot Sazonal de {disease}')
 
     # Display the plot in Streamlit
     st.plotly_chart(fig)

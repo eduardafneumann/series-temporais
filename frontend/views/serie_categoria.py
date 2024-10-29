@@ -3,6 +3,11 @@ import plotly.express as px
 import pandas as pd
 from global_values import *
 
+
+st.write(""" 
+         # DataSUS - Sinan - Comparações entre Valores de Categoria    
+         """)
+
 start_date=pd.to_datetime('2016-01-01').date()
 end_date=pd.to_datetime('2023-12-31').date()
 
@@ -98,7 +103,7 @@ for disease in dfs_option:
     df = process_df(df)
 
     # Create a seasonal plot
-    fig = px.line(df, x=df.index, y='casos', color='categoria', title=f'Category Plot for {disease} Data in Brazil')
+    fig = px.line(df, x=df.index, y='casos', color='categoria', title=f'Casos de {disease} por {column_option}')
 
     # Display the plot in Streamlit
     st.plotly_chart(fig)

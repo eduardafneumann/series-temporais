@@ -2,9 +2,9 @@ import streamlit as st
 
 pages = {
     "Insights": [
-        st.Page("views/serie_completa.py", title="Comparação entre Doenças", icon='📊'),
-        st.Page("views/plot_sazonal.py", title="Plot Sazonal", icon='📈'),
-        st.Page("views/serie_categoria.py", title="Comparação entre Valores de Categoria", icon='📊'),
+        st.Page("views/serie_completa.py", title="Comparações entre Doenças", icon='📈'),
+        st.Page("views/plot_sazonal.py", title="Plots Sazonais", icon='📉'),
+        st.Page("views/serie_categoria.py", title="Comparações entre Valores de Categoria", icon='📊'),
     ],
 }
 
