@@ -1,15 +1,75 @@
-Para rodar o frontend localmente, execute:
+# DataSUS - Séries Temporais
+
+O DataSUS é o departamento de informática do Sistema Único de Saúde (SUS), responsável por fornecer sistemas de informação e suporte tecnológico que auxiliam no planejamento, operação e controle das ações de saúde pública. Entre seus serviços, destaca-se o TABNET, uma plataforma que disponibiliza dados cruciais para análises da situação de saúde, tomadas de decisão baseadas em evidências e a formulação de políticas públicas.
+
+## Objetivo
+
+Desenvolver uma plataforma web para visualização de séries temporais, utilizando os dados disponibilizados pelo DataSUS, facilitando a análise de informações de saúde ao longo do tempo.
+
+## Requisitos (Windows)
+
+### Ambiente de desenvolvimento
+
+- [Python](https://www.python.org/)
+- [Git](https://www.python.org/)
+
+### Ambiente de produção
+
+- [Docker Desktop](https://www.docker.com/get-started)
+- [Git](https://www.python.org/)
+
+## Configuração do ambiente de desenvolvimento (Windows)
+
+A seguintes etapas consideram que o Python e o Git estejam previamente configurados na máquina na qual se quer criar este ambiente.
+
+### Configurando o ambiente virtual do Python
+
+- Clone este repositório com o comando:
+
+```
+git clone https://github.com/eduardafneumann/series-temporais.git
+```
+
+- Crie o ambiente virtual com o seguinte comando:
+
+```
+python -m venv venv
+```
+
+- Ative o ambiente virtual com:
+
+```
+venv\Scripts\activate
+```
+
+- Instale as depêncidas do projeto com o seguinte comando:
 
 ```
 pip install -r ./frontend/requirements.txt
-
-streamlit run ./frontend/streamlit_app.py
 ```
 
-Para rodar o frontend via docker, execute:
+- Acesse a pasta do frontend com o comando:
 
 ```
-docker compose watch
+cd frontend
 ```
 
-Em ambos os casos o frontend estará disponível em http://localhost:8000.
+- Inicie o servidor do Streamlit com o comando:
+
+```
+streamlit run ./streamlit_app.py
+```
+
+## Configuração do ambiente de produção (Linux e Windows)
+
+A seguintes etapas consideram que o Docker e o Git estejam previamente configurados na máquina na qual se quer criar este ambiente.
+
+### Contêineres Docker
+
+- Inicie o servidor Streamlit por meio do Docker:
+
+```
+docker-compose up --build
+```
+
+- Acesse o frontend pela URL [localhost](http://localhost:8000)
