@@ -8,7 +8,7 @@ pages = {
     ],
     "Insights": [
         st.Page("views/insights.py", title="Insight 1"),
-        st.Page("views/insights.py", title="Insight 2", url_path='i'),
+        st.Page("views/insights2.py", title="Insight 2"),
         st.Page("views/insights.py", title="Insight 3", url_path='i2'),
     ],
 }
@@ -21,3 +21,5 @@ with st.sidebar:
     #st.title("DATASUS")
     st.page_link(pages['Bases'][0])
     st.page_link(pages['Insights'][0])
+    st.page_link(pages['Insights'][1])
+    
