@@ -20,3 +20,4 @@ with st.sidebar:
     st.image("images/logo-datasus.png", use_column_width=True)
     #st.title("DATASUS")
     st.page_link(pages['Bases'][0])
+    st.page_link(pages['Insights'][0])
