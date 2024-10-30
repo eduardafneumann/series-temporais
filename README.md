@@ -57,7 +57,7 @@ cd frontend
 - Inicie o servidor do Streamlit com o comando:
 
 ```
-streamlit run ./streamlit_app.py --server.port 8000
+streamlit run ./frontend/streamlit_app.py --server.port 8000
 ```
 
 - Acesse o frontend pela URL [localhost](http://localhost:8000)
