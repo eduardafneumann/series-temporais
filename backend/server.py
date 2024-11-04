@@ -31,13 +31,13 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, 
 # Endpoint to get combined dataframe
 @app.route('/get_combined_df', methods=['GET'])
 def get_combined_df():
-    dfs_option = request.headers.get('dfs_option').split(',')
-    start_date = pd.to_datetime(request.headers.get('start_date')).date()
-    end_date = pd.to_datetime(request.headers.get('end_date')).date()
-    sexo_option = int(request.headers.get('sexo_option'))
-    raca_option = int(request.headers.get('raca_option'))
-    idade_option = list(map(int, request.headers.get('idade_option').split(',')))
-    frequency_option = request.headers.get('frequency_option')
+    dfs_option = request.headers.get('dfs-option').split(',')
+    start_date = pd.to_datetime(request.headers.get('start-date')).date()
+    end_date = pd.to_datetime(request.headers.get('end-date')).date()
+    sexo_option = int(request.headers.get('sexo-option'))
+    raca_option = int(request.headers.get('raca-option'))
+    idade_option = list(map(int, request.headers.get('idade-option').split(',')))
+    frequency_option = request.headers.get('frequency-option')
 
     df_zika, df_chik, df_deng, df_aids = load_data()
 
