@@ -1,22 +1,23 @@
 import streamlit as st
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
 from global_values import *
+import requests
 
+# Define the server URL
+SERVER_URL = "http://127.0.0.1:5000"
 
 st.write(""" 
          # DataSUS - Sinan - Comparações entre Valores de Categoria    
          """)
 
-start_date=pd.to_datetime('2016-01-01').date()
-end_date=pd.to_datetime('2023-12-31').date()
+start_date = pd.to_datetime('2016-01-01').date()
+end_date = pd.to_datetime('2023-12-31').date()
 
 # Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
     'Selecione Dataframes',
-    #options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
-    #default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
-    options=['ZIKA', 'CHIK', 'AIDS'],
+    options=['ZIKA', 'CHIK', 'AIDS', 'DENG'],
     default=['ZIKA', 'CHIK', 'AIDS']
 )
 
@@ -29,11 +30,11 @@ column_option = st.selectbox(
 
 def get_values(column):
     if column == 'sexo':
-        return sex_codes.keys()
+        return list(sex_codes.keys())
     elif column == 'raca':
-        return skin_color_codes.keys()
+        return list(skin_color_codes.keys())
     elif column == 'estado':
-        return uf_codes.keys()
+        return list(uf_codes.keys())
 
 values_options = st.multiselect(
     'Selecione os Valores para Comparar',
@@ -41,75 +42,29 @@ values_options = st.multiselect(
     default=[]
 )
 
-@st.cache_data
+# Function to get data from the server
 def get_dfs_to_plot(dfs_option, column_option, values_options):
-
-    def load_data():
-        df_zika = pd.read_parquet('frontend/data/ZIKA.parquet')
-        df_chik = pd.read_parquet('frontend/data/CHIK.parquet')
-        #df_deng = pd.read_parquet('data/DENG.parquet')
-        df_deng = None
-        df_aids = pd.read_parquet('frontend/data/AIDS.parquet')
-        return df_zika, df_chik, df_deng, df_aids
-    
-    def process_df(df, column_option, values_trasformed):
-        df = df[(df.index.date >= start_date) & (df.index.date <= end_date)]
-        df = df[[column_option]]
-
-        df[column_option] = df[column_option].apply(lambda x: x if x in values_trasformed else None)
-        df = pd.get_dummies(df, columns=[column_option], prefix="", prefix_sep="")
-        df.columns = df.columns.astype(float).astype(int)
-
-        df = df.resample('ME').sum()
-        df = df.rename(columns = get_inverted_dict(column_option))
-
-        df = df.reset_index()
-        df = pd.melt(df, id_vars=['data'], var_name='categoria', value_name='casos')
-        df = df.set_index('data')
-
-        return df
-    
-    def get_values_transformed(column, values):
-        if column == 'sexo':
-            return  [sex_codes[value] for value in values]
-        elif column == 'raca':
-            return [skin_color_codes[value] for value in values]
-        elif column == 'estado':
-            return [uf_codes[value] for value in values]
-        
-    def get_inverted_dict(column):
-        if column == 'sexo':
-            return inverted_sex_codes
-        elif column == 'raca':
-            return inverted_skin_color_codes
-        elif column == 'estado':
-            return inverted_uf_codes
-
-    df_zika, df_chik, df_deng, df_aids = load_data()
-
-    df_dict = {
-        'ZIKA': df_zika,
-        'CHIK': df_chik,
-        'AIDS': df_aids,
-        'DENG': df_deng
+    headers = {
+        'dfs-option': ','.join(dfs_option),
+        'column-option': column_option,
+        'values-options': ','.join(values_options),
+        'start-date': str(start_date),
+        'end-date': str(end_date)
     }
+    response = requests.get(f"{SERVER_URL}/get_dfs_to_plot_categoria", headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        dfs_to_plot = [(pd.read_json(data[disease], orient='split'), disease) for disease in data]
+        return dfs_to_plot
+    else:
+        st.error("Failed to fetch data from the server")
+        return []
 
-    values_trasformed = get_values_transformed(column_option, values_options)
+dfs_to_plot = get_dfs_to_plot(dfs_option, column_option, values_options)
 
-    dfs_to_plot = []
-
-    for disease in dfs_option:
-        df = df_dict[disease]
-        df = process_df(df, column_option, values_trasformed)
-        dfs_to_plot.append((df, disease))
-
-    return dfs_to_plot
-
-
-for df, disease in get_dfs_to_plot(dfs_option, column_option, values_options):
-    # Create a seasonal plot
-    fig = px.line(df, x=df.index, y='casos', color='categoria', title=f'Casos de {disease} por {column_option}')
+for df, disease in dfs_to_plot:
+    # Create a plot for the category comparison
+    fig = px.line(df, x=df.index, y='casos', color='categoria', title=f'Comparação de {column_option} para {disease}')
 
     # Display the plot in Streamlit
     st.plotly_chart(fig)
-

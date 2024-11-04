@@ -1,6 +1,10 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import requests
+
+# Define the server URL
+SERVER_URL = "http://127.0.0.1:5000"
 
 st.write(""" 
          # DataSUS - Sinan - Comparações entre Doenças    
@@ -9,9 +13,7 @@ st.write("""
 # Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
     'Selecione Dataframes',
-    #options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
-    #default=['ZIKA', 'CHIK', 'DENG', 'AIDS']
-    options=['ZIKA', 'CHIK', 'AIDS'],
+    options=['ZIKA', 'CHIK', 'DENG', 'AIDS'],
     default=['ZIKA', 'CHIK', 'AIDS']
 )
 
@@ -55,51 +57,22 @@ idade_option = st.slider(
 @st.cache_data
 def get_combined_df(dfs_option, start_date, end_date, sexo_option, raca_option, idade_option, frequency_option):
 
-    def load_data():
-        df_zika = pd.read_parquet('frontend/data/ZIKA.parquet')
-        df_chik = pd.read_parquet('frontend/data/CHIK.parquet')
-        #df_deng = pd.read_parquet('data/DENG.parquet')
-        df_deng = None
-        df_aids = pd.read_parquet('frontend/data/AIDS.parquet')
-        return df_zika, df_chik, df_deng, df_aids
-    
-    # Function to filter dataframe
-    def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
-        df = filter_df_time(df, start_date, end_date)
-        if sexo_option != -1:
-            df = df[df['sexo'] == sexo_option]
-        if raca_option != -1:
-            df = df[df['raca'] == raca_option]
-        df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
-
-        df = df.resample(frequency).count()
-        df = df[['sexo']].rename(columns={'sexo': 'casos'})
-        df['doenca'] = disease
-
-        return df
-
-    # Function to filter dataframe by time
-    def filter_df_time(df, start_date, end_date):
-        return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
-
-    df_zika, df_chik, df_deng, df_aids = load_data()
-
-    # Filter selected dataframes
-    filtered_dfs = []
-    if 'ZIKA' in dfs_option:
-        filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA', frequency_option))
-    if 'CHIK' in dfs_option:
-        filtered_dfs.append(filter_df(df_chik, start_date, end_date, sexo_option, raca_option, idade_option, 'CHIK', frequency_option))
-    if 'DENG' in dfs_option:
-        filtered_dfs.append(filter_df(df_deng, start_date, end_date, sexo_option, raca_option, idade_option, 'DENG', frequency_option))
-    if 'AIDS' in dfs_option:
-        filtered_dfs.append(filter_df(df_aids, start_date, end_date, sexo_option, raca_option, idade_option, 'AIDS', frequency_option))
-
-    combined_df = pd.concat(filtered_dfs)
-
-    return combined_df
-
-
+    headers = {
+        'dfs-option': ','.join(dfs_option),
+        'start-date': str(start_date),
+        'end-date': str(end_date),
+        'sexo-option': str(sexo_option),
+        'raca-option': str(raca_option),
+        'idade-option': ','.join(map(str, idade_option)),
+        'frequency-option': frequency_option
+    }
+    response = requests.get(f"{SERVER_URL}/get_combined_df", headers=headers)
+    if response.status_code == 200:
+        combined_df = pd.read_json(response.text, orient='split')
+        return combined_df
+    else:
+        st.error("Failed to fetch data from the server")
+        return pd.DataFrame()
     
 combined_df = get_combined_df(dfs_option, start_date, end_date, sexo_option, raca_option, idade_option, frequency_option)
 
