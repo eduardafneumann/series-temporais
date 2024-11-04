@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import pandas as pd
+from global_values import *
 
 app = Flask(__name__)
 
@@ -39,8 +40,6 @@ def get_combined_df():
     idade_option = list(map(int, request.headers.get('idade-option').split(',')))
     frequency_option = request.headers.get('frequency-option')
 
-    df_zika, df_chik, df_deng, df_aids = load_data()
-
     filtered_dfs = []
     if 'ZIKA' in dfs_option:
         filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA', frequency_option))
@@ -57,12 +56,9 @@ def get_combined_df():
 # Endpoint to get dfs to plot (sazonal)
 @app.route('/get_dfs_to_plot_sazonal', methods=['GET'])
 def get_dfs_to_plot_sazonal():
-    print(request.headers)
     dfs_option = request.headers.get('dfs-option').split(',')
     start_date = pd.to_datetime(request.headers.get('start-date')).date()
     end_date = pd.to_datetime(request.headers.get('end-date')).date()
-
-    df_zika, df_chik, df_deng, df_aids = load_data()
 
     df_dict = {
         'ZIKA': df_zika,
@@ -88,11 +84,11 @@ def get_dfs_to_plot_sazonal():
 # Endpoint to get dfs to plot (categoria)
 @app.route('/get_dfs_to_plot_categoria', methods=['GET'])
 def get_dfs_to_plot_categoria():
-    dfs_option = request.headers.get('dfs_option').split(',')
-    column_option = request.headers.get('column_option')
-    values_options = request.headers.get('values_options').split(',')
-
-    df_zika, df_chik, df_deng, df_aids = load_data()
+    dfs_option = request.headers.get('dfs-option').split(',')
+    start_date = pd.to_datetime(request.headers.get('start-date')).date()
+    end_date = pd.to_datetime(request.headers.get('end-date')).date()
+    column_option = request.headers.get('column-option')
+    values_options = request.headers.get('values-options').split(',')
 
     def process_df(df, column_option, values_transformed):
         df = df[(df.index.date >= start_date) & (df.index.date <= end_date)]
@@ -143,4 +139,5 @@ def get_dfs_to_plot_categoria():
     return jsonify(result)
 
 if __name__ == '__main__':
+    df_zika, df_chik, df_deng, df_aids = load_data()
     app.run(debug=True)
