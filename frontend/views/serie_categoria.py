@@ -41,6 +41,7 @@ values_options = st.multiselect(
     default=[]
 )
 
+@st.cache_data
 def get_dfs_to_plot(dfs_option, column_option, values_options):
 
     def load_data():

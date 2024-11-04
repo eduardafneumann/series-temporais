@@ -6,18 +6,6 @@ st.write("""
          # DataSUS - Sinan - Comparações entre Doenças    
          """)
 
-# Load data
-@st.cache_data
-def load_data():
-    df_zika = pd.read_parquet('frontend/data/ZIKA.parquet')
-    df_chik = pd.read_parquet('frontend/data/CHIK.parquet')
-    #df_deng = pd.read_parquet('data/DENG.parquet')
-    df_deng = None
-    df_aids = pd.read_parquet('frontend/data/AIDS.parquet')
-    return df_zika, df_chik, df_deng, df_aids
-
-df_zika, df_chik, df_deng, df_aids = load_data()
-
 # Add a multiselect to filter dataframes
 dfs_option = st.multiselect(
     'Selecione Dataframes',
@@ -64,41 +52,58 @@ idade_option = st.slider(
     value=(0, 150)
 )
 
-# Function to filter dataframe by time
 @st.cache_data
-def filter_df_time(df, start_date, end_date):
-    return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
+def get_combined_df(dfs_option, start_date, end_date, sexo_option, raca_option, idade_option, frequency_option):
 
-# Function to filter dataframe
-def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
-    df = filter_df_time(df, start_date, end_date)
-    if sexo_option != -1:
-        df = df[df['sexo'] == sexo_option]
-    if raca_option != -1:
-        df = df[df['raca'] == raca_option]
-    df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
-
-    df = df.resample(frequency).count()
-    df = df[['sexo']].rename(columns={'sexo': 'casos'})
-    df['doenca'] = disease
-
-    return df
-
-# Filter selected dataframes
-filtered_dfs = []
-if 'ZIKA' in dfs_option:
-    filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA', frequency_option))
-if 'CHIK' in dfs_option:
-    filtered_dfs.append(filter_df(df_chik, start_date, end_date, sexo_option, raca_option, idade_option, 'CHIK', frequency_option))
-if 'DENG' in dfs_option:
-    filtered_dfs.append(filter_df(df_deng, start_date, end_date, sexo_option, raca_option, idade_option, 'DENG', frequency_option))
-if 'AIDS' in dfs_option:
-    filtered_dfs.append(filter_df(df_aids, start_date, end_date, sexo_option, raca_option, idade_option, 'AIDS', frequency_option))
-
-# Combine filtered dataframes
-if filtered_dfs:
-    combined_df = pd.concat(filtered_dfs)
+    def load_data():
+        df_zika = pd.read_parquet('frontend/data/ZIKA.parquet')
+        df_chik = pd.read_parquet('frontend/data/CHIK.parquet')
+        #df_deng = pd.read_parquet('data/DENG.parquet')
+        df_deng = None
+        df_aids = pd.read_parquet('frontend/data/AIDS.parquet')
+        return df_zika, df_chik, df_deng, df_aids
     
+    # Function to filter dataframe
+    def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
+        df = filter_df_time(df, start_date, end_date)
+        if sexo_option != -1:
+            df = df[df['sexo'] == sexo_option]
+        if raca_option != -1:
+            df = df[df['raca'] == raca_option]
+        df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
+
+        df = df.resample(frequency).count()
+        df = df[['sexo']].rename(columns={'sexo': 'casos'})
+        df['doenca'] = disease
+
+        return df
+
+    # Function to filter dataframe by time
+    def filter_df_time(df, start_date, end_date):
+        return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
+
+    df_zika, df_chik, df_deng, df_aids = load_data()
+
+    # Filter selected dataframes
+    filtered_dfs = []
+    if 'ZIKA' in dfs_option:
+        filtered_dfs.append(filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option, 'ZIKA', frequency_option))
+    if 'CHIK' in dfs_option:
+        filtered_dfs.append(filter_df(df_chik, start_date, end_date, sexo_option, raca_option, idade_option, 'CHIK', frequency_option))
+    if 'DENG' in dfs_option:
+        filtered_dfs.append(filter_df(df_deng, start_date, end_date, sexo_option, raca_option, idade_option, 'DENG', frequency_option))
+    if 'AIDS' in dfs_option:
+        filtered_dfs.append(filter_df(df_aids, start_date, end_date, sexo_option, raca_option, idade_option, 'AIDS', frequency_option))
+
+    combined_df = pd.concat(filtered_dfs)
+
+    return combined_df
+
+
+    
+combined_df = get_combined_df(dfs_option, start_date, end_date, sexo_option, raca_option, idade_option, frequency_option)
+
+if not combined_df.empty:
     # Plot data
     fig = px.line(combined_df, x=combined_df.index, y='casos', color='doenca', title='Casos por Doença')
     st.plotly_chart(fig, key=1)
