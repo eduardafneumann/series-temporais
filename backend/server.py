@@ -12,26 +12,16 @@ def load_data():
     df_aids = pd.read_parquet('data/AIDS.parquet')
     return df_zika, df_chik, df_deng, df_aids
 
-# Function to filter dataframe by time
-def filter_df_time(df, start_date, end_date):
-    return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
-
-# Function to filter dataframe
-def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
-    df = filter_df_time(df, start_date, end_date)
-    if sexo_option != -1:
-        df = df[df['sexo'] == sexo_option]
-    if raca_option != -1:
-        df = df[df['raca'] == raca_option]
-    df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
-    df = df.resample(frequency).count()
-    df = df[['sexo']].rename(columns={'sexo': 'casos'})
-    df['doenca'] = disease
-    return df
+@app.route('/')
+def home():
+    return 'Server running...'
 
 # Endpoint to get combined dataframe
 @app.route('/get_combined_df', methods=['GET'])
 def get_combined_df():
+    
+    df_zika, df_chik, df_deng, df_aids = load_data()
+
     dfs_option = request.headers.get('dfs-option').split(',')
     start_date = pd.to_datetime(request.headers.get('start-date')).date()
     end_date = pd.to_datetime(request.headers.get('end-date')).date()
@@ -39,6 +29,25 @@ def get_combined_df():
     raca_option = int(request.headers.get('raca-option'))
     idade_option = list(map(int, request.headers.get('idade-option').split(',')))
     frequency_option = request.headers.get('frequency-option')
+
+
+    # Function to filter dataframe by time
+    def filter_df_time(df, start_date, end_date):
+        return df[(df.index.date >= start_date) & (df.index.date <= end_date)]
+
+    # Function to filter dataframe
+    def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option, disease, frequency):
+        df = filter_df_time(df, start_date, end_date)
+        if sexo_option != -1:
+            df = df[df['sexo'] == sexo_option]
+        if raca_option != -1:
+            df = df[df['raca'] == raca_option]
+        df = df[(df['idade'] >= idade_option[0]) & (df['idade'] <= idade_option[1])]
+        df = df.resample(frequency).count()
+        df = df[['sexo']].rename(columns={'sexo': 'casos'})
+        df['doenca'] = disease
+        return df
+
 
     filtered_dfs = []
     if 'ZIKA' in dfs_option:
@@ -56,6 +65,9 @@ def get_combined_df():
 # Endpoint to get dfs to plot (sazonal)
 @app.route('/get_dfs_to_plot_sazonal', methods=['GET'])
 def get_dfs_to_plot_sazonal():
+
+    df_zika, df_chik, df_deng, df_aids = load_data()
+
     dfs_option = request.headers.get('dfs-option').split(',')
     start_date = pd.to_datetime(request.headers.get('start-date')).date()
     end_date = pd.to_datetime(request.headers.get('end-date')).date()
@@ -84,6 +96,9 @@ def get_dfs_to_plot_sazonal():
 # Endpoint to get dfs to plot (categoria)
 @app.route('/get_dfs_to_plot_categoria', methods=['GET'])
 def get_dfs_to_plot_categoria():
+
+    df_zika, df_chik, df_deng, df_aids = load_data()
+
     dfs_option = request.headers.get('dfs-option').split(',')
     start_date = pd.to_datetime(request.headers.get('start-date')).date()
     end_date = pd.to_datetime(request.headers.get('end-date')).date()
@@ -139,5 +154,4 @@ def get_dfs_to_plot_categoria():
     return jsonify(result)
 
 if __name__ == '__main__':
-    df_zika, df_chik, df_deng, df_aids = load_data()
     app.run(debug=True)
