@@ -82,3 +82,11 @@ fig = px.line(df_resid,
               y=df_resid['Casos']
 )
 st.plotly_chart(fig)
+
+df_resid.dropna(inplace = True)
+fig = plt.figure()
+plt.acorr(df_resid['Casos'], maxlags = 100)
+plt.title("Autocorrelação")
+plt.xlabel("Lags")
+plt.ylabel("Correlação")
+st.pyplot(fig)
