@@ -4,10 +4,10 @@ st.set_page_config(page_title="DataSUS", page_icon="🦠")
 
 pages = {
     "Insights": [
-        st.Page("src/views/serie_completa.py", title="Comparações entre Doenças", icon='📈'),
-        st.Page("src/views/plot_sazonal.py", title="Plots Sazonais", icon='📉'),
-        st.Page("src/views/serie_categoria.py", title="Comparações entre Valores de Categoria", icon='📊'),
-        st.Page("src/views/decomposicao.py", title="Decomposição das Séries", icon='📈'),
+        st.Page("views/serie_completa.py", title="Comparações entre Doenças", icon='📈'),
+        st.Page("views/plot_sazonal.py", title="Plots Sazonais", icon='📉'),
+        st.Page("views/serie_categoria.py", title="Comparações entre Valores de Categoria", icon='📊'),
+        st.Page("views/decomposicao.py", title="Decomposição das Séries", icon='📈'),
     ],
 }
 
