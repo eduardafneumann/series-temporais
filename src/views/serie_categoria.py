@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from global_values import *
+from src.global_values import *
 
 
 st.write(""" 
@@ -9,7 +9,7 @@ st.write("""
          """)
 
 start_date=pd.to_datetime('2016-01-01').date()
-end_date=pd.to_datetime('2023-12-31').date()
+end_date=pd.to_datetimec('2023-12-31').date()
 
 # Load data
 @st.cache_data
