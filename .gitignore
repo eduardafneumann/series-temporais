@@ -1,13 +1,5 @@
-data-extraction/venv
-frontend/venv
-frontend/data/sih/sih.csv
-frontend/data/sim/sim.csv
-frontend/data/sinan/aids.csv
-frontend/data/sinan/chik.csv
-frontend/data/sinan/zika.csv
-frontend/data/sinan/deng1.csv
-frontend/data/sinan/deng2.csv
-frontend/__pycache__
+venv
+__pycache__
 
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
