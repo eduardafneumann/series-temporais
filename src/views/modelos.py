@@ -179,8 +179,8 @@ if model_option == "SARIMA":
             step=1
         )
     
-    model = auto_arima(train_data['Number of Cases'], seasonal=True, m=12)
-    print(model.summary())
+    # model = auto_arima(train_data['Number of Cases'], seasonal=True, m=12)
+    # print(model.summary())
 
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q), seasonal_order=(P, D, Q, m))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
