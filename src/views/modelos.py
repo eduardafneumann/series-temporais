@@ -15,7 +15,7 @@ arima_aids_coff = (2, 1, 2)
 arima_zika_coff = (5, 1, 4)
 arima_chik_coff = (5, 1, 3)
 
-sarima_coff = (1, 1, 1, 7)
+sarima_coff = (1, 0, 0, 12)
 
 st.write(""" 
          # DataSUS - Sinan - Previsão das Séries   
@@ -54,10 +54,15 @@ elif df_option == "AIDS":
     arima_coff = arima_aids_coff
 
 # Group by DT_NOTIFIC and count the number of cases
-df_cases_count = df.groupby('data').size().reset_index(name='Number of Cases')
+df_cases_count = df.resample('ME').count()
+df_cases_count['Number of Cases'] = df_cases_count['sexo']
+df_cases_count = df_cases_count['Number of Cases']
+df_cases_count = df_cases_count.reset_index()
 train_data = df_cases_count[df_cases_count['data'].dt.year < 2023]
 test_data = df_cases_count[df_cases_count['data'].dt.year == 2023]
 forecast_steps = len(test_data)
+
+st.write(df_cases_count)
 
 if model_option == "ARIMA":
 
@@ -174,8 +179,8 @@ if model_option == "SARIMA":
             step=1
         )
     
-    # model = auto_arima(train_data['Number of Cases'], seasonal=True, m=365)
-    # print(model.summary())
+    model = auto_arima(train_data['Number of Cases'], seasonal=True, m=12)
+    print(model.summary())
 
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q), seasonal_order=(P, D, Q, m))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
