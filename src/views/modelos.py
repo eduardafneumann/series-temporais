@@ -62,8 +62,6 @@ train_data = df_cases_count[df_cases_count['data'].dt.year < 2023]
 test_data = df_cases_count[df_cases_count['data'].dt.year == 2023]
 forecast_steps = len(test_data)
 
-st.write(df_cases_count)
-
 if model_option == "ARIMA":
 
     st.write(f"Os parâmetros do modelo ARIMA sugeridos são {arima_coff}. Se desejar, mude os parâmetros abaixo.")
@@ -72,7 +70,7 @@ if model_option == "ARIMA":
 
     with c1:
         p = st.number_input(
-            label="Parâmetro p (componente autoregressivo):",
+            label="Componente autoregressivo:",
             min_value=0,
             max_value=10,
             value=arima_coff[0],
@@ -81,7 +79,7 @@ if model_option == "ARIMA":
 
     with c2:
         d = st.number_input(
-            label="Parâmetro d (número de diferenciações):",
+            label="Número de diferenciações:",
             min_value=0,
             max_value=10,
             value=arima_coff[1],
@@ -90,7 +88,7 @@ if model_option == "ARIMA":
 
     with c3:
         q = st.number_input(
-            label="Parâmetro q (médias moveis):",
+            label="Médias moveis:",
             min_value=0,
             max_value=10,
             value=arima_coff[2],
@@ -115,11 +113,12 @@ if model_option == "SARIMA":
     st.write(f"Os parâmetros do modelo SARIMA sugeridos são {arima_coff}, para a parte não sazonal, e {sarima_coff} para a parte sazonal. Se desejar, mude os parâmetros abaixo.")
 
     c1, c2, c3 = st.columns(3)
-    c4, c5, c6, c7 = st.columns(4)
+    c4, c5 = st.columns(2)
+    c6, c7 = st.columns(2)
 
     with c1:
         p = st.number_input(
-            label="Parâmetro p (componente autoregressivo):",
+            label="Componente autoregressivo:",
             min_value=0,
             max_value=10,
             value=arima_coff[0],
@@ -128,7 +127,7 @@ if model_option == "SARIMA":
 
     with c2:
         d = st.number_input(
-            label="Parâmetro d (número de diferenciações):",
+            label="Número de diferenciações:",
             min_value=0,
             max_value=10,
             value=arima_coff[1],
@@ -137,7 +136,7 @@ if model_option == "SARIMA":
 
     with c3:
         q = st.number_input(
-            label="Parâmetro q (médias moveis):",
+            label="Médias moveis:",
             min_value=0,
             max_value=10,
             value=arima_coff[2],
@@ -146,7 +145,7 @@ if model_option == "SARIMA":
 
     with c4:
         P = st.number_input(
-            label="Parâmetro P (componente autoregressivo da parte sazonal):",
+            label="Componente autoregressivo da parte sazonal:",
             min_value=0,
             max_value=10,
             value=sarima_coff[0],
@@ -155,7 +154,7 @@ if model_option == "SARIMA":
 
     with c5:
         D = st.number_input(
-            label="Parâmetro D (número de diferenciações da parte sazonal):",
+            label="Número de diferenciações da parte sazonal:",
             min_value=0,
             max_value=10,
             value=sarima_coff[1],
@@ -164,7 +163,7 @@ if model_option == "SARIMA":
 
     with c6:
         Q = st.number_input(
-            label="Parâmetro Q (médias moveis da parte sazonal):",
+            label="Médias moveis da parte sazonal:",
             min_value=0,
             max_value=10,
             value=sarima_coff[2],
@@ -173,7 +172,7 @@ if model_option == "SARIMA":
 
     with c7:
         m = st.number_input(
-            label="Parâmetro m (período da sazonalidade):",
+            label="Período da sazonalidade:",
             min_value=0,
             max_value=365,
             value=sarima_coff[3],
