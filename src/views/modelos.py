@@ -96,8 +96,9 @@ if model_option == "ARIMA":
 
     # model = auto_arima(train_data['Number of Cases'], seasonal=False)
     # print(model.summary())
-    
-    model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q))  # Order (p, d, q)
+    # Zika: (3, 1, 0)
+
+    model_cases = ARIMA(train_data['Number of Cases'], order=(p, d , q))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
     forecast_steps = len(test_data)
     forecast_cases = model_cases_fit.get_forecast(steps=forecast_steps)
