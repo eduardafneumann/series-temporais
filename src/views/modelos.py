@@ -54,7 +54,7 @@ elif df_option == "AIDS":
     arima_coff = arima_aids_coff
 
 # Group by DT_NOTIFIC and count the number of cases
-df_cases_count = df.resample('ME').count()
+df_cases_count = df.resample('D').count()
 df_cases_count['Number of Cases'] = df_cases_count['sexo']
 df_cases_count = df_cases_count['Number of Cases']
 df_cases_count = df_cases_count.reset_index()
@@ -296,11 +296,11 @@ else:
 c1, c2 = st.columns(2)
 
 with c1:
-    fig = plot_acf(std_residuals, lags=len(std_residuals)-1, title='Função de autocorrelação dos resíduos')
+    fig = plot_acf(std_residuals, title='Função de autocorrelação dos resíduos')
     st.pyplot(fig)
 
 with c2:
-    fig = plot_pacf(std_residuals, lags=len(std_residuals)/2-1, title='Função de autocorrelação parcial dos resíduos')
+    fig = plot_pacf(std_residuals, title='Função de autocorrelação parcial dos resíduos')
     st.pyplot(fig)
 
 
