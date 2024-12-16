@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 from statsmodels.tsa.arima.model import ARIMA
+from pmdarima import auto_arima
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import gaussian_kde
@@ -90,6 +91,9 @@ if model_option == "ARIMA":
             value=arima_coff[2],
             step=1
         )
+
+    # model = auto_arima(train_data['Number of Cases'], seasonal=False)
+    # print(model.summary())
     
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
@@ -170,6 +174,9 @@ if model_option == "SARIMA":
             step=1
         )
     
+    # model = auto_arima(train_data['Number of Cases'], seasonal=True, m=365)
+    # print(model.summary())
+
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q), seasonal_order=(P, D, Q, m))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
     forecast_cases = model_cases_fit.get_forecast(steps=forecast_steps)
