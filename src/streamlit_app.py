@@ -8,6 +8,7 @@ pages = {
         st.Page("views/plot_sazonal.py", title="Plots Sazonais", icon='📉'),
         st.Page("views/serie_categoria.py", title="Comparações entre Valores de Categoria", icon='📊'),
         st.Page("views/decomposicao.py", title="Decomposição das Séries", icon='📈'),
+        st.Page("views/modelo.py", title="Modelos", icon='📉'),
     ],
 }
 
@@ -21,6 +22,7 @@ with st.sidebar:
     st.page_link(pages['Insights'][1])
     st.page_link(pages['Insights'][2])
     st.page_link(pages['Insights'][3])
+    st.page_link(pages['Insights'][4])
     
     st.sidebar.title("Sobre")
     st.sidebar.info(
