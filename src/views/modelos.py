@@ -99,8 +99,9 @@ if model_option == "ARIMA":
 
     # model = auto_arima(train_data['Number of Cases'], seasonal=False)
     # print(model.summary())
-    
-    model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q))  # Order (p, d, q)
+    # Zika: (3, 1, 0)
+
+    model_cases = ARIMA(train_data['Number of Cases'], order=(p, d , q))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
     forecast_cases = model_cases_fit.get_forecast(steps=forecast_steps)
     pred_mean_cases = forecast_cases.predicted_mean
@@ -295,11 +296,11 @@ else:
 c1, c2 = st.columns(2)
 
 with c1:
-    fig = plot_acf(std_residuals, lags=20, title='Função de autocorrelação dos resíduos')
+    fig = plot_acf(std_residuals, lags=len(std_residuals)-1, title='Função de autocorrelação dos resíduos')
     st.pyplot(fig)
 
 with c2:
-    fig = plot_pacf(std_residuals, lags=20, title='Função de autocorrelação parcial dos resíduos')
+    fig = plot_pacf(std_residuals, lags=len(std_residuals)/2-1, title='Função de autocorrelação parcial dos resíduos')
     st.pyplot(fig)
 
 
