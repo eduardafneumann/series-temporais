@@ -102,19 +102,19 @@ test_df = filtered_df.iloc[train_size:]
 
 if model_option == 'AR':
     # Fit AR model
-    from statsmodels.tsa.ar_model import AutoReg
+    from statsmodels.tsa.arima.model import ARIMA
 
-    model = AutoReg(train_df, lags=1)
+    model = ARIMA(train_df, order=(5, 1, 0))
     model_fit = model.fit()
 
     # Forecast
-    forecast = model_fit.predict(start=len(train_df), end=len(train_df) + len(test_df) - 1)
+    forecast = model_fit.forecast(steps=test_size)
 
     # Plot data
     fig = px.line(test_df, x=test_df.index, y='casos', title='Série Prevista com Modelo AR')
-    fig.add_scatter(x=test_df.index, y=forecast, mode='lines', name='Previsão')
+    fig.add_scatter(x=forecast.index, y=forecast, mode='lines', name='Previsão')
     st.plotly_chart(fig, key=4)
-    
+
 
 elif model_option == 'ARIMA' or model_option == 'SARIMA':
     # Add a selectbox to select a new dataframe
