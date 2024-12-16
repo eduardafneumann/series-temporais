@@ -16,7 +16,7 @@ pg = st.navigation(pages, position="hidden")
 pg.run()
 
 with st.sidebar:
-    st.image("images/logo-datasus.png", use_container_width=True)
+    st.image("images/logo-datasus.png", use_column_width=True)
     #st.title("DATASUS")
     st.page_link(pages['Insights'][0])
     st.page_link(pages['Insights'][1])
