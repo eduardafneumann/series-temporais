@@ -85,15 +85,36 @@ def filter_df(df, start_date, end_date, sexo_option, raca_option, idade_option):
     df = df.resample('D').count()
     df = df[['sexo']].rename(columns={'sexo': 'casos'})
 
+    all_dates = pd.date_range(start=start_date, end=end_date, freq='D')
+    df = df.reindex(all_dates, fill_value=0)
+    df.index.name = 'date'
+
     return df
 
 # Filter selected temporal series to model
 filtered_df = filter_df(df_zika, start_date, end_date, sexo_option, raca_option, idade_option)
 
+train_size = int(len(filtered_df) * 0.8)
+test_size = len(filtered_df) - train_size
+
+train_df = filtered_df.iloc[:train_size]
+test_df = filtered_df.iloc[train_size:]
+
 if model_option == 'AR':
+    # Fit AR model
+    from statsmodels.tsa.ar_model import AutoReg
+
+    model = AutoReg(train_df, lags=1)
+    model_fit = model.fit()
+
+    # Forecast
+    forecast = model_fit.predict(start=len(train_df), end=len(train_df) + len(test_df) - 1)
+
     # Plot data
-    fig = px.line(filtered_df, x=filtered_df.index, y='casos', title='Série Prevista com Modelo AR')
-    st.plotly_chart(fig, key=1)
+    fig = px.line(test_df, x=test_df.index, y='casos', title='Série Prevista com Modelo AR')
+    fig.add_scatter(x=test_df.index, y=forecast, mode='lines', name='Previsão')
+    st.plotly_chart(fig, key=4)
+    
 
 elif model_option == 'ARIMA' or model_option == 'SARIMA':
     # Add a selectbox to select a new dataframe
@@ -136,15 +157,6 @@ elif model_option == 'ARIMA' or model_option == 'SARIMA':
 
     # Filter selected temporal series to model
     other_filtered_df = filter_df(other_df, start_date, end_date, other_sexo_option, other_raca_option, other_idade_option)
-
-    st.write(len(filtered_df))
-    st.write(len(other_filtered_df))
-
-    train_size = int(len(filtered_df) * 0.8)
-    test_size = len(filtered_df) - train_size
-
-    train_df = filtered_df.iloc[:train_size]
-    test_df = filtered_df.iloc[train_size:]
 
     other_train_size = int(len(other_filtered_df) * 0.8)
     other_train_df = other_filtered_df.iloc[:other_train_size]
