@@ -45,19 +45,13 @@ venv\Scripts\activate
 - Instale as depêncidas do projeto com o seguinte comando:
 
 ```
-pip install -r ./frontend/requirements.txt
-```
-
-- Acesse a pasta do frontend com o comando:
-
-```
-cd frontend
+pip install -r ./requirements.txt
 ```
 
 - Inicie o servidor do Streamlit com o comando:
 
 ```
-streamlit run ./frontend/streamlit_app.py --server.port 8000
+streamlit run ./src/streamlit_app.py --server.port 8000
 ```
 
 - Acesse o frontend pela URL [localhost](http://localhost:8000)

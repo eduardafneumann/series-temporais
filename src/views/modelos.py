@@ -197,10 +197,28 @@ if model_option == "SARIMA":
     std_residuals = residuals / np.std(residuals, ddof=1)  # Studentized residuals
     test_data['Studentized Residuals'] = std_residuals
 
+if model_option == "Autoregressivo":
 
-    
+    st.write("O modelo Autoregressivo usa apenas o parâmetro AR (autoregressivo). Se desejar, mude o parâmetro abaixo.")
 
+    p = st.number_input(
+        label="Componente autoregressivo:",
+        min_value=0,
+        max_value=10,
+        value=1,  # Valor padrão do parâmetro AR
+        step=1
+    )
 
+    # Ajuste do modelo AR
+    model_cases = ARIMA(train_data['Number of Cases'], order=(p, 0, 0))  # AR(p)
+    model_cases_fit = model_cases.fit()
+    forecast_cases = model_cases_fit.get_forecast(steps=forecast_steps)
+    pred_mean_cases = forecast_cases.predicted_mean
+
+    # Cálculo dos resíduos
+    residuals = test_data['Number of Cases'] - pred_mean_cases
+    std_residuals = residuals / np.std(residuals, ddof=1)  # Resíduos studentizados
+    test_data['Studentized Residuals'] = std_residuals
 
 # PLOTAR PREVISÃO E VALORES REAIS
 
