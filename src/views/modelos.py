@@ -15,7 +15,9 @@ arima_aids_coff = (2, 1, 2)
 arima_zika_coff = (5, 1, 4)
 arima_chik_coff = (5, 1, 3)
 
-sarima_coff = (1, 0, 0, 12)
+sarima_aids_coff = ((2,1,2),(1,0,2,7)) #((5,1,0),(2,0,0,7))
+sarima_zika_coff = ((2,1,0),(1,0,0,12)) #((2,1,2),(1,0,2,7))
+sarima_chik_coff = ((2,0,0),(0,0,1,12)) #((2,1,2),(1,0,1,7))
 
 st.write(""" 
          # DataSUS - Sinan - Previsão das Séries   
@@ -46,15 +48,18 @@ model_option = st.selectbox(
 if df_option == "ZIKA":
     df = df_zika
     arima_coff = arima_zika_coff
+    sarima_coff = sarima_zika_coff
 elif df_option == "CHIK":
     df = df_chik
     arima_coff = arima_chik_coff
+    sarima_coff = sarima_chik_coff
 elif df_option == "AIDS":
     df = df_aids
     arima_coff = arima_aids_coff
+    sarima_coff = sarima_aids_coff
 
 # Group by DT_NOTIFIC and count the number of cases
-df_cases_count = df.resample('D').count()
+df_cases_count = df.resample('D' if df_option=="AIDS" or model_option!="SARIMA" else 'ME').count()
 df_cases_count['Number of Cases'] = df_cases_count['sexo']
 df_cases_count = df_cases_count['Number of Cases']
 df_cases_count = df_cases_count.reset_index()
@@ -95,9 +100,9 @@ if model_option == "ARIMA":
             step=1
         )
 
+    # Find the best parameters for the model
     # model = auto_arima(train_data['Number of Cases'], seasonal=False)
     # print(model.summary())
-    # Zika: (3, 1, 0)
 
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d , q))  # Order (p, d, q)
     model_cases_fit = model_cases.fit()
@@ -110,7 +115,7 @@ if model_option == "ARIMA":
 
 if model_option == "SARIMA":
 
-    st.write(f"Os parâmetros do modelo SARIMA sugeridos são {arima_coff}, para a parte não sazonal, e {sarima_coff} para a parte sazonal. Se desejar, mude os parâmetros abaixo.")
+    st.write(f"Os parâmetros do modelo SARIMA sugeridos são {sarima_coff[0]}, para a parte não sazonal, e {sarima_coff[1]} para a parte sazonal. Se desejar, mude os parâmetros abaixo.")
 
     c1, c2, c3 = st.columns(3)
     c4, c5 = st.columns(2)
@@ -121,7 +126,7 @@ if model_option == "SARIMA":
             label="Componente autoregressivo:",
             min_value=0,
             max_value=10,
-            value=arima_coff[0],
+            value=sarima_coff[0][0],
             step=1
         )
 
@@ -130,7 +135,7 @@ if model_option == "SARIMA":
             label="Número de diferenciações:",
             min_value=0,
             max_value=10,
-            value=arima_coff[1],
+            value=sarima_coff[0][1],
             step=1
         )
 
@@ -139,7 +144,7 @@ if model_option == "SARIMA":
             label="Médias moveis:",
             min_value=0,
             max_value=10,
-            value=arima_coff[2],
+            value=sarima_coff[0][2],
             step=1
         )
 
@@ -148,7 +153,7 @@ if model_option == "SARIMA":
             label="Componente autoregressivo da parte sazonal:",
             min_value=0,
             max_value=10,
-            value=sarima_coff[0],
+            value=sarima_coff[1][0],
             step=1
         )
 
@@ -157,7 +162,7 @@ if model_option == "SARIMA":
             label="Número de diferenciações da parte sazonal:",
             min_value=0,
             max_value=10,
-            value=sarima_coff[1],
+            value=sarima_coff[1][1],
             step=1
         )
 
@@ -166,7 +171,7 @@ if model_option == "SARIMA":
             label="Médias moveis da parte sazonal:",
             min_value=0,
             max_value=10,
-            value=sarima_coff[2],
+            value=sarima_coff[1][2],
             step=1
         )
 
@@ -175,11 +180,12 @@ if model_option == "SARIMA":
             label="Período da sazonalidade:",
             min_value=0,
             max_value=365,
-            value=sarima_coff[3],
+            value=sarima_coff[1][3],
             step=1
         )
     
-    # model = auto_arima(train_data['Number of Cases'], seasonal=True, m=12)
+    # Find the best parameters for the model
+    # model = auto_arima(train_data['Number of Cases'], seasonal=True, m=12) # m is the number of periods in a season 12 if using months, 7 if using days
     # print(model.summary())
 
     model_cases = ARIMA(train_data['Number of Cases'], order=(p, d, q), seasonal_order=(P, D, Q, m))  # Order (p, d, q)
